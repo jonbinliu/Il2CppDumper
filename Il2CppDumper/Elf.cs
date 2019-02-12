@@ -309,14 +309,23 @@ namespace Il2CppDumper
                     var sym = rel.r_info >> 8;
                     switch (type)
                     {
-                        case R_386_32 when isx86:
-                        case R_ARM_ABS32 when !isx86:
+                        case R_386_32 :
+                            if ( isx86  )
                             {
                                 var dynamic_symbol = dynamic_symbol_table[sym];
                                 Position = MapVATR(rel.r_offset);
                                 writer.Write(dynamic_symbol.st_value);
-                                break;
                             }
+                            break;
+
+                        case R_ARM_ABS32  :
+                            if(!isx86)
+                            {
+                                var dynamic_symbol = dynamic_symbol_table[sym];
+                                Position = MapVATR(rel.r_offset);
+                                writer.Write(dynamic_symbol.st_value);
+                            }
+                            break;
                     }
                 }
                 writer.Flush();
@@ -334,7 +343,9 @@ namespace Il2CppDumper
                 var datarelro = sectionWithName[".data.rel.ro"];
                 var text = sectionWithName[".text"];
                 var bss = sectionWithName[".bss"];
-                sectionWithName.TryGetValue(".data.rel.ro.local", out var datarelrolocal);
+
+                Elf32_Shdr datarelrolocal;
+                sectionWithName.TryGetValue(".data.rel.ro.local", out datarelrolocal);
 
                 var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages);
                 plusSearch.SetSearch(datarelro, datarelrolocal);

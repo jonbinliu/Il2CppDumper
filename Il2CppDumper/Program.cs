@@ -385,10 +385,15 @@ namespace Il2CppDumper
                                                 multi = Encoding.UTF8.GetString(metadata.ReadBytes(uiLen));
                                                 break;
                                         }
-                                        if (multi is string str)
-                                            writer.Write($" = \"{ToEscapedString(str)}\"");
-                                        else if (multi is char c)
+                                        if (multi is string )
                                         {
+                                            string str = multi as string;
+                                            writer.Write($" = \"{ToEscapedString(str)}\"");
+                                        }
+
+                                        else if (multi is char)
+                                        {
+                                            char c = (char)multi; 
                                             var v = (int)c;
                                             writer.Write($" = '\\x{v:x}'");
                                         }
@@ -636,7 +641,8 @@ namespace Il2CppDumper
 
         private static string GetModifiers(Il2CppMethodDefinition methodDef)
         {
-            if (methodModifiers.TryGetValue(methodDef, out string str))
+            string str; 
+            if (methodModifiers.TryGetValue(methodDef, out str))
                 return str;
             var access = methodDef.flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK;
             switch (access)

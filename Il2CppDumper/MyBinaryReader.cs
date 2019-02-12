@@ -33,14 +33,24 @@ namespace Il2CppDumper
                     return ReadUInt16();
                 case "Byte":
                     return ReadByte();
-                case "Int64" when is32Bit:
-                    return ReadInt32();
                 case "Int64":
-                    return ReadInt64();
-                case "UInt64" when is32Bit:
-                    return ReadUInt32();
-                case "UInt64":
-                    return ReadUInt64();
+                    if( is32Bit )
+                    {
+                        return ReadInt32();
+                    }
+                    else
+                    {
+                        return ReadInt64();
+                    }
+                case "UInt64" :
+                    if(is32Bit)
+                    {
+                        return ReadUInt32();
+                    }
+                    else
+                    {
+                        return ReadUInt64();
+                    }
                 default:
                     return null;
             }
@@ -48,8 +58,14 @@ namespace Il2CppDumper
 
         public dynamic Position
         {
-            get => BaseStream.Position;
-            set => BaseStream.Position = (long)value;
+            get
+            {
+                return BaseStream.Position; 
+            }
+            set
+            {
+                BaseStream.Position = (long)value; 
+            }
         }
 
         public T ReadClass<T>(dynamic addr) where T : new()

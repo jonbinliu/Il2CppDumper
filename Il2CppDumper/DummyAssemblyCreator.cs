@@ -371,12 +371,15 @@ namespace Il2CppDumper
                     }
                 case Il2CppTypeEnum.IL2CPP_TYPE_VAR:
                     {
-                        if (genericParameterDic.TryGetValue(pType, out var genericParameter))
+                        GenericParameter genericParameter; 
+                        if (genericParameterDic.TryGetValue(pType, out genericParameter))
                         {
                             return genericParameter;
                         }
-                        if (memberReference is MethodDefinition methodDefinition)
+
+                        if (memberReference is MethodDefinition )
                         {
+                            MethodDefinition methodDefinition = memberReference as MethodDefinition ;
                             var genericName = "T" + (methodDefinition.DeclaringType.GenericParameters.Count + 1);
                             genericParameter = new GenericParameter(genericName, methodDefinition.DeclaringType);
                             methodDefinition.DeclaringType.GenericParameters.Add(genericParameter);
@@ -392,7 +395,8 @@ namespace Il2CppDumper
                     }
                 case Il2CppTypeEnum.IL2CPP_TYPE_MVAR:
                     {
-                        if (genericParameterDic.TryGetValue(pType, out var genericParameter))
+                        GenericParameter genericParameter;
+                        if (genericParameterDic.TryGetValue(pType, out genericParameter))
                         {
                             return genericParameter;
                         }
